@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Complaint Box for Bae 💖</title>
+  <style>
+    body {
+      background: #ffe6f0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: #d63384;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    form {
+      background: #fff0f5;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
+      max-width: 500px;
+      margin: auto;
+    }
+    textarea, select, input[type="text"] {
+      width: 100%;
+      padding: 1rem;
+      margin: 1rem 0;
+      border: 2px solid #d63384;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    button {
+      background: #ff66b2;
+      color: white;
+      border: none;
+      padding: 1rem 2rem;
+      font-size: 1.2rem;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #e60073;
+    }
+    .footer {
+      margin-top: 2rem;
+      font-size: 0.9rem;
+    }
+    .heart {
+      color: #ff66b2;
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>💌 Welcome to Your Personal Complaint Box Ingela 💌</h1>
+  <p>Hey babe, got something on your mind? Let it all out below 😘</p>
+
+  <form id="complaintForm">
+    <label for="mood">Mood:</label>
+    <select id="mood" name="mood">
+      <option value="🥰">🥰 Loving but annoyed</option>
+      <option value="😤">😤 Slightly furious</option>
+      <option value="😒">😒 Over it</option>
+      <option value="😭">😭 Crying in the club</option>
+    </select>
+
+    <label for="complaint">Complaint:</label>
+    <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot our 3.5 week anniversary AGAIN..."></textarea>
+
+    <label>
+      <input type="checkbox" required />
+      I understand that this complaint may be read while Sarthak's eating chips or working out 🤷‍♂️
+    </label>
+
+    <br><br>
+    <button type="submit">Submit Complaint 💌</button>
+  </form>
+
+  <div class="footer">
+    <p class="heart">❤️ Made with love and fear ❤️</p>
+  </div>
+
+  <script>
+    const form = document.getElementById('complaintForm');
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      
+      const mood = document.getElementById('mood').value;
+      const complaint = document.getElementById('complaint').value.trim();
+
+      if (complaint.length === 0) {
+        alert('Hey! You forgot to write the complaint! 😅');
+        return;
+      }
+
+      // Formspree endpoint – replace with your actual endpoint
+      const formspreeEndpoint = "https://formspree.io/f/mzzgapoq";
+
+      // Prepare the data to send
+      const formData = new FormData();
+      formData.append("mood", mood);
+      formData.append("complaint", complaint);
+
+      try {
+        const response = await fetch(formspreeEndpoint, {
+          method: "POST",
+          body: formData,
+          headers: {
+            Accept: "application/json",
+          },
+        });
+
+        if (response.ok) {
+          alert(`Complaint received: ${mood} - "${complaint}"
+Thank you for helping me grow into a better boyfriend! 💖`);
+          form.reset();
+        } else {
+          alert("Oops! Something went wrong while sending your complaint 😥");
+        }
+      } catch (error) {
+        alert("Failed to send complaint. Check your internet or try again later 😢");
+      }
+    });
+  </script>
+</body>
+</html>
