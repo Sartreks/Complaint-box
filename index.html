@@ -121,7 +121,7 @@
     </select>
 
     <label for="complaint">Complaint:</label>
-    <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot our 3.5 week anniversary AGAIN..."></textarea>
+    <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot to get me ice cream..."></textarea>
 
     <label>
       <input type="checkbox" required />
@@ -146,7 +146,7 @@
       const complaint = document.getElementById('complaint').value.trim();
 
       if (complaint.length === 0) {
-        alert('Hey! You forgot to write the complaint! 😅');
+        alert('Hey! You forgot to write the complaint baby! 😅');
         return;
       }
 
@@ -169,10 +169,10 @@
           alert(`Complaint received: ${mood} - "${complaint}"\nThank you for helping me grow into a better boyfriend! 💖`);
           form.reset();
         } else {
-          alert("Oops! Something went wrong while sending your complaint 😥");
+          alert("Oops! Something went wrong while sending your complaint babe 😥");
         }
       } catch (error) {
-        alert("Failed to send complaint. Check your internet or try again later 😢");
+        alert("Failed to send complaint. Check your internet or try again later baby girl 😢");
       }
     });
   </script>
