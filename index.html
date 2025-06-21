@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Complaint Box for Bae 💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -33,13 +33,11 @@
       box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
       max-width: 500px;
       margin: auto;
-      box-sizing: border-box;
     }
 
     textarea,
     select,
-    input[type="text"],
-    input[type="date"] {
+    input[type="text"] {
       width: 100%;
       padding: 1rem;
       margin: 1rem 0;
@@ -55,6 +53,17 @@
       text-align: left;
       margin: 0.5rem 0 0.2rem;
       font-weight: 600;
+    }
+
+    .radio-group {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .radio-group label {
+      display: block;
+      font-weight: normal;
+      margin: 0.3rem 0;
     }
 
     input[type="checkbox"] {
@@ -88,25 +97,24 @@
       font-size: 2rem;
     }
 
-    .complaints-list {
-      margin-top: 2rem;
-      text-align: left;
+    .history {
       max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 2rem auto;
       background: #fff0f5;
-      padding: 1.5rem;
-      border-radius: 20px;
+      padding: 1rem;
+      border-radius: 15px;
       box-shadow: 0 0 10px rgba(214, 51, 132, 0.1);
+      text-align: left;
+    }
+
+    .history h2 {
+      text-align: center;
     }
 
     .complaint-entry {
-      border-bottom: 1px solid #ffcce0;
-      padding: 0.8rem 0;
-    }
-
-    .complaint-entry:last-child {
-      border-bottom: none;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed #d63384;
+      padding-bottom: 0.5rem;
     }
 
     @media (max-width: 480px) {
@@ -126,10 +134,6 @@
         font-size: 1rem;
         padding: 0.8rem 1.5rem;
       }
-
-      .complaints-list {
-        padding: 1rem;
-      }
     }
   </style>
 </head>
@@ -146,24 +150,32 @@
       <option value="😭">😭 Crying in the club</option>
     </select>
 
-    <label for="date">Date of Offense:</label>
-    <input type="date" id="date" name="date" required />
+    <label>When did it happen?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="date" value="Today" checked /> Today</label>
+      <label><input type="radio" name="date" value="Yesterday" /> Yesterday</label>
+      <label><input type="radio" name="date" value="A few days ago" /> A few days ago</label>
+      <label><input type="radio" name="date" value="I don't even remember 🫠" /> I don't even remember 🫠</label>
+    </div>
+
+    <label for="customDate">Or write your own:</label>
+    <input type="text" id="customDate" name="customDate" placeholder="e.g. June 15, last Tuesday" />
 
     <label for="complaint">Complaint:</label>
     <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot to get me ice cream..."></textarea>
 
     <label>
       <input type="checkbox" required />
-      I understand that this complaint may be read while Sarthak's eating chips or working out 🤷‍♂️
+      I understand this may be read while Sarthak's eating chips or working out 🤷‍♂️
     </label>
 
     <br><br>
     <button type="submit">Submit Complaint 💌</button>
   </form>
 
-  <div class="complaints-list" id="complaintsList" style="display:none;">
+  <div class="history" id="complaintHistory">
     <h2>📜 Complaint History</h2>
-    <div id="complaintEntries"></div>
+    <div id="historyList"></div>
   </div>
 
   <div class="footer">
@@ -172,57 +184,42 @@
 
   <script>
     const form = document.getElementById('complaintForm');
-    const complaintsList = document.getElementById('complaintsList');
-    const complaintEntries = document.getElementById('complaintEntries');
+    const historyList = document.getElementById('historyList');
+    const storageKey = 'complaints';
 
-    // Load from localStorage
-    function loadComplaints() {
-      const stored = localStorage.getItem('complaints');
-      if (!stored) return [];
+    function getDateSelection() {
+      const radios = document.querySelectorAll('input[name="date"]');
+      let selected = '';
+      radios.forEach(radio => {
+        if (radio.checked) selected = radio.value;
+      });
 
-      try {
-        return JSON.parse(stored);
-      } catch {
-        return [];
-      }
+      const custom = document.getElementById('customDate').value.trim();
+      return custom !== '' ? custom : selected;
     }
 
-    function saveComplaint(data) {
-      const complaints = loadComplaints();
-      complaints.unshift(data);
-      localStorage.setItem('complaints', JSON.stringify(complaints));
-    }
+    function updateHistoryDisplay() {
+      const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
+      historyList.innerHTML = stored.length === 0
+        ? '<p>No complaints yet, so proud of you 💖</p>'
+        : '';
 
-    function renderComplaints() {
-      const complaints = loadComplaints();
-      complaintEntries.innerHTML = '';
-
-      if (complaints.length === 0) {
-        complaintsList.style.display = 'none';
-        return;
-      }
-
-      complaintsList.style.display = 'block';
-
-      complaints.forEach(c => {
+      stored.forEach(entry => {
         const div = document.createElement('div');
         div.className = 'complaint-entry';
-        div.innerHTML = `
-          <strong>${c.date}</strong> - <em>${c.mood}</em><br>
-          ${c.text}
-        `;
-        complaintEntries.appendChild(div);
+        div.innerHTML = `<strong>${entry.date}</strong> - ${entry.mood}<br>${entry.text}<br><em>– Ingela</em>`;
+        historyList.appendChild(div);
       });
     }
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-
+      
       const mood = document.getElementById('mood').value;
       const complaint = document.getElementById('complaint').value.trim();
-      const date = document.getElementById('date').value;
+      const date = getDateSelection();
 
-      if (!complaint) {
+      if (complaint.length === 0) {
         alert('Hey! You forgot to write the complaint baby! 😅');
         return;
       }
@@ -233,6 +230,7 @@
       formData.append("mood", mood);
       formData.append("complaint", complaint);
       formData.append("date", date);
+      formData.append("from", "Ingela");
 
       try {
         const response = await fetch(formspreeEndpoint, {
@@ -244,9 +242,11 @@
         });
 
         if (response.ok) {
-          saveComplaint({ mood, text: complaint, date });
-          renderComplaints();
-          alert(`Complaint received: ${mood} - "${complaint}"\nThank you for helping me grow into a better boyfriend! 💖`);
+          alert(`Complaint received from Ingela 💖\nMood: ${mood}\n"${complaint}"\nDate: ${date}`);
+          const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
+          stored.unshift({ mood, text: complaint, date });
+          localStorage.setItem(storageKey, JSON.stringify(stored));
+          updateHistoryDisplay();
           form.reset();
         } else {
           alert("Oops! Something went wrong while sending your complaint babe 😥");
@@ -256,8 +256,7 @@
       }
     });
 
-    // Initial load
-    renderComplaints();
+    updateHistoryDisplay();
   </script>
 </body>
 </html>
