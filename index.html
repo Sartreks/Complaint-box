@@ -7,6 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       background: #ffe6f0;
       font-family: 'Quicksand', sans-serif;
@@ -34,7 +38,6 @@
       box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
       max-width: 500px;
       margin: auto;
-      box-sizing: border-box;
     }
 
     textarea, select, input[type="text"], input[type="date"] {
@@ -44,7 +47,6 @@
       border: 2px solid #d63384;
       border-radius: 10px;
       font-size: 1rem;
-      box-sizing: border-box;
       font-family: 'Quicksand', sans-serif;
     }
 
@@ -102,12 +104,17 @@
     }
 
     #history {
-      margin-top: 2rem;
+      margin: 2rem auto 2rem auto;
       text-align: left;
       background: #ffe6f0;
       padding: 1rem;
       border-radius: 10px;
       font-size: 0.9rem;
+      max-width: 500px;
+    }
+
+    #history h3 {
+      text-align: center;
     }
 
     @media (max-width: 480px) {
@@ -172,28 +179,24 @@
     const livePreview = document.getElementById('livePreview');
     const historyDiv = document.getElementById('history');
 
-    // Mood emoji update
     moodSelect.addEventListener('change', () => {
       emojiDisplay.textContent = moodSelect.value;
     });
 
-    // Anonymous toggle
     anonymousToggle.addEventListener('change', () => {
       nameInput.disabled = anonymousToggle.checked;
       nameInput.placeholder = anonymousToggle.checked ? "Anonymous" : "Your Name (Optional)";
     });
 
-    // Live preview
     complaintInput.addEventListener('input', () => {
       livePreview.textContent = `"${complaintInput.value}"`;
     });
 
-    // Load history
     const renderHistory = () => {
       const data = JSON.parse(localStorage.getItem('complaints')) || [];
       if (data.length > 0) {
-        historyDiv.innerHTML = "<h3>📝 Your Last 3 Complaints:</h3>" +
-          data.map(c => `<p>${c.date || 'Today'} — ${c.name || 'Anonymous'} ${c.mood}: ${c.complaint}</p>`).join('');
+        historyDiv.innerHTML = "<h3>📝 Your Complaint History:</h3>" +
+          data.map(c => `<p><strong>${c.date || 'Today'}</strong> — <em>${c.name || 'Anonymous'}</em> ${c.mood}: ${c.complaint}</p>`).join('');
       }
     };
     renderHistory();
@@ -236,10 +239,10 @@
           ];
           alert(`Complaint received!\n${affirmations[Math.floor(Math.random() * affirmations.length)]}`);
 
-          // Save to local history
+          // Save all complaints
           let history = JSON.parse(localStorage.getItem("complaints")) || [];
-          history.unshift({ mood, complaint, name, date: new Date().toLocaleString() });
-          localStorage.setItem("complaints", JSON.stringify(history.slice(0, 3)));
+          history.unshift({ mood, complaint, name, date: date || new Date().toLocaleString() });
+          localStorage.setItem("complaints", JSON.stringify(history));
 
           renderHistory();
           form.reset();
