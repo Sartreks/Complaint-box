@@ -2,10 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Complaint Box for Bae 💖</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
       background: #ffe6f0;
@@ -15,15 +14,18 @@
       padding: 1rem;
       margin: 0;
     }
+
     h1 {
       font-size: 2.2rem;
       margin-bottom: 1rem;
       font-weight: 600;
     }
+
     p {
       font-size: 1.1rem;
       margin-bottom: 1.5rem;
     }
+
     form {
       background: #fff0f5;
       padding: 2rem 1.5rem;
@@ -31,32 +33,44 @@
       box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
       max-width: 500px;
       margin: auto;
-      box-sizing: border-box;
-      text-align: left;
     }
-    label {
-      display: block;
-      margin: 0.5rem 0 0.2rem;
-      font-weight: 600;
-    }
-    select,
+
     textarea,
-    input[type="date"] {
+    select,
+    input[type="text"] {
       width: 100%;
       padding: 1rem;
-      margin: 0.5rem 0 1rem 0;
+      margin: 1rem 0;
       border: 2px solid #d63384;
       border-radius: 10px;
       font-size: 1rem;
       box-sizing: border-box;
       font-family: 'Quicksand', sans-serif;
-      color: #d63384;
-      background: #fff0f5;
     }
+
+    label {
+      display: block;
+      text-align: left;
+      margin: 0.5rem 0 0.2rem;
+      font-weight: 600;
+    }
+
+    .radio-group {
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+
+    .radio-group label {
+      display: block;
+      font-weight: normal;
+      margin: 0.3rem 0;
+    }
+
     input[type="checkbox"] {
       margin-right: 0.5rem;
       vertical-align: middle;
     }
+
     button {
       background: #ff66b2;
       color: white;
@@ -67,78 +81,58 @@
       cursor: pointer;
       width: 100%;
       font-weight: bold;
-      margin-top: 1rem;
     }
+
     button:hover {
       background: #e60073;
     }
+
     .footer {
       margin-top: 2rem;
       font-size: 0.9rem;
-      text-align: center;
     }
+
     .heart {
       color: #ff66b2;
       font-size: 2rem;
     }
-    .history-container {
+
+    .history {
       max-width: 500px;
       margin: 2rem auto;
       background: #fff0f5;
-      border-radius: 20px;
-      box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
-      padding: 1.5rem;
-      box-sizing: border-box;
+      padding: 1rem;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(214, 51, 132, 0.1);
       text-align: left;
-      color: #8b2e5e;
-      font-family: 'Quicksand', sans-serif;
     }
-    .history-title {
-      font-weight: 600;
-      font-size: 1.3rem;
-      margin-bottom: 1rem;
-      color: #d63384;
+
+    .history h2 {
       text-align: center;
     }
+
     .complaint-entry {
-      border-bottom: 1px solid #d6338475;
-      padding-bottom: 0.8rem;
-      margin-bottom: 0.8rem;
-    }
-    .complaint-entry:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
-    }
-    .complaint-mood {
-      font-size: 1.2rem;
-      margin-bottom: 0.2rem;
-    }
-    .complaint-text {
-      margin-bottom: 0.3rem;
-    }
-    .complaint-date {
-      font-size: 0.85rem;
-      color: #a85192;
-      font-style: italic;
+      margin-bottom: 1rem;
+      border-bottom: 1px dashed #d63384;
+      padding-bottom: 0.5rem;
     }
 
     @media (max-width: 480px) {
       h1 {
         font-size: 1.8rem;
       }
+
       p {
         font-size: 1rem;
       }
+
       form {
         padding: 1.5rem 1rem;
       }
+
       button {
         font-size: 1rem;
         padding: 0.8rem 1.5rem;
-      }
-      .history-container {
-        padding: 1rem;
       }
     }
   </style>
@@ -147,33 +141,41 @@
   <h1>💌 Welcome to Your Personal Complaint Box Ingela 💌</h1>
   <p>Hey babe, got something on your mind? Let it all out below 😘</p>
 
-  <form id="complaintForm" novalidate>
+  <form id="complaintForm">
     <label for="mood">Mood:</label>
-    <select id="mood" name="mood" required>
-      <option value="" disabled selected>Select your mood</option>
+    <select id="mood" name="mood">
       <option value="🥰">🥰 Loving but annoyed</option>
       <option value="😤">😤 Slightly furious</option>
       <option value="😒">😒 Over it</option>
       <option value="😭">😭 Crying in the club</option>
     </select>
 
-    <label for="complaint">Complaint:</label>
-    <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot to get me ice cream..." required></textarea>
+    <label>When did it happen?</label>
+    <div class="radio-group">
+      <label><input type="radio" name="date" value="Today" checked /> Today</label>
+      <label><input type="radio" name="date" value="Yesterday" /> Yesterday</label>
+      <label><input type="radio" name="date" value="A few days ago" /> A few days ago</label>
+      <label><input type="radio" name="date" value="I don't even remember 🫠" /> I don't even remember 🫠</label>
+    </div>
 
-    <label for="date">Date of Offense:</label>
-    <input type="date" id="date" name="date" max="" required />
+    <label for="customDate">Or write your own:</label>
+    <input type="text" id="customDate" name="customDate" placeholder="e.g. June 15, last Tuesday" />
+
+    <label for="complaint">Complaint:</label>
+    <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot to get me ice cream..."></textarea>
 
     <label>
-      <input type="checkbox" id="agreement" required />
-      I understand that this complaint may be read while Sarthak's eating chips or working out 🤷‍♂️
+      <input type="checkbox" required />
+      I understand this may be read while Sarthak's eating chips or working out 🤷‍♂️
     </label>
 
+    <br><br>
     <button type="submit">Submit Complaint 💌</button>
   </form>
 
-  <div class="history-container" id="historyContainer" aria-live="polite" aria-relevant="additions">
-    <div class="history-title">📜 Complaint History</div>
-    <div id="historyList">No complaints yet. Be the first! 💕</div>
+  <div class="history" id="complaintHistory">
+    <h2>📜 Complaint History</h2>
+    <div id="historyList"></div>
   </div>
 
   <div class="footer">
@@ -181,72 +183,44 @@
   </div>
 
   <script>
-    // Set max date of date picker to today
-    const dateInput = document.getElementById('date');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('max', today);
-
     const form = document.getElementById('complaintForm');
     const historyList = document.getElementById('historyList');
-    const storageKey = 'complaintBoxHistory';
+    const storageKey = 'complaints';
 
-    // Load and display complaints from localStorage
+    function getDateSelection() {
+      const radios = document.querySelectorAll('input[name="date"]');
+      let selected = '';
+      radios.forEach(radio => {
+        if (radio.checked) selected = radio.value;
+      });
+
+      const custom = document.getElementById('customDate').value.trim();
+      return custom !== '' ? custom : selected;
+    }
+
     function updateHistoryDisplay() {
       const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
-      if (stored.length === 0) {
-        historyList.textContent = 'No complaints yet. Be the first! 💕';
-        return;
-      }
+      historyList.innerHTML = stored.length === 0
+        ? '<p>No complaints yet, so proud of you 💖</p>'
+        : '';
 
-      historyList.innerHTML = '';
-      stored.forEach(({ mood, text, date }) => {
-        const entry = document.createElement('div');
-        entry.className = 'complaint-entry';
-
-        const moodElem = document.createElement('div');
-        moodElem.className = 'complaint-mood';
-        moodElem.textContent = `Mood: ${mood}`;
-
-        const textElem = document.createElement('div');
-        textElem.className = 'complaint-text';
-        textElem.textContent = text;
-
-        const dateElem = document.createElement('div');
-        dateElem.className = 'complaint-date';
-        dateElem.textContent = `Date: ${date}`;
-
-        entry.appendChild(moodElem);
-        entry.appendChild(textElem);
-        entry.appendChild(dateElem);
-
-        historyList.appendChild(entry);
+      stored.forEach(entry => {
+        const div = document.createElement('div');
+        div.className = 'complaint-entry';
+        div.innerHTML = `<strong>${entry.date}</strong> - ${entry.mood}<br>${entry.text}<br><em>– Ingela</em>`;
+        historyList.appendChild(div);
       });
     }
 
-    updateHistoryDisplay();
-
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      
+      const mood = document.getElementById('mood').value;
+      const complaint = document.getElementById('complaint').value.trim();
+      const date = getDateSelection();
 
-      const mood = form.mood.value;
-      const complaint = form.complaint.value.trim();
-      const date = form.date.value;
-      const agreementChecked = form.agreement.checked;
-
-      if (!mood) {
-        alert('Please select your mood before submitting 💖');
-        return;
-      }
       if (complaint.length === 0) {
         alert('Hey! You forgot to write the complaint baby! 😅');
-        return;
-      }
-      if (!date) {
-        alert('Please select the date of offense 🗓️');
-        return;
-      }
-      if (!agreementChecked) {
-        alert('You must acknowledge before submitting 💕');
         return;
       }
 
@@ -256,7 +230,7 @@
       formData.append("mood", mood);
       formData.append("complaint", complaint);
       formData.append("date", date);
-      formData.append("from", "Ingela"); // fixed "from"
+      formData.append("from", "Ingela");
 
       try {
         const response = await fetch(formspreeEndpoint, {
@@ -268,22 +242,11 @@
         });
 
         if (response.ok) {
-          // Confetti celebration 🎉 with mobile-friendly adjustments
-          const isMobile = window.innerWidth < 500;
-          confetti({
-            particleCount: isMobile ? 80 : 150,
-            spread: 100,
-            origin: { y: 0.6 },
-          });
-
           alert(`Complaint received from Ingela 💖\nMood: ${mood}\n"${complaint}"\nDate: ${date}`);
-
-          // Save complaint to localStorage history
           const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
           stored.unshift({ mood, text: complaint, date });
           localStorage.setItem(storageKey, JSON.stringify(stored));
           updateHistoryDisplay();
-
           form.reset();
         } else {
           alert("Oops! Something went wrong while sending your complaint babe 😥");
@@ -292,6 +255,8 @@
         alert("Failed to send complaint. Check your internet or try again later baby girl 😢");
       }
     });
+
+    updateHistoryDisplay();
   </script>
 </body>
 </html>
