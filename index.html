@@ -5,12 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Complaint Box for Bae 💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       background: #ffe6f0;
       font-family: 'Quicksand', sans-serif;
@@ -28,7 +23,7 @@
 
     p {
       font-size: 1.1rem;
-      margin-bottom: 1.2rem;
+      margin-bottom: 1.5rem;
     }
 
     form {
@@ -38,15 +33,20 @@
       box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
       max-width: 500px;
       margin: auto;
+      box-sizing: border-box;
     }
 
-    textarea, select, input[type="text"], input[type="date"] {
+    textarea,
+    select,
+    input[type="text"],
+    input[type="date"] {
       width: 100%;
       padding: 1rem;
-      margin: 0.8rem 0;
+      margin: 1rem 0;
       border: 2px solid #d63384;
       border-radius: 10px;
       font-size: 1rem;
+      box-sizing: border-box;
       font-family: 'Quicksand', sans-serif;
     }
 
@@ -72,7 +72,6 @@
       cursor: pointer;
       width: 100%;
       font-weight: bold;
-      margin-top: 1rem;
     }
 
     button:hover {
@@ -89,47 +88,54 @@
       font-size: 2rem;
     }
 
-    #emojiDisplay {
-      font-size: 3rem;
-      margin-top: 1rem;
-    }
-
-    #livePreview {
-      margin-top: 1rem;
-      font-style: italic;
-      color: #800040;
-      background: #fff5fa;
-      padding: 0.8rem;
-      border-radius: 10px;
-    }
-
-    #history {
-      margin: 2rem auto 2rem auto;
+    .complaints-list {
+      margin-top: 2rem;
       text-align: left;
-      background: #ffe6f0;
-      padding: 1rem;
-      border-radius: 10px;
-      font-size: 0.9rem;
       max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #fff0f5;
+      padding: 1.5rem;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(214, 51, 132, 0.1);
     }
 
-    #history h3 {
-      text-align: center;
+    .complaint-entry {
+      border-bottom: 1px solid #ffcce0;
+      padding: 0.8rem 0;
+    }
+
+    .complaint-entry:last-child {
+      border-bottom: none;
     }
 
     @media (max-width: 480px) {
-      h1 { font-size: 1.8rem; }
-      p { font-size: 1rem; }
-      form { padding: 1.5rem 1rem; }
-      button { font-size: 1rem; padding: 0.8rem 1.5rem; }
+      h1 {
+        font-size: 1.8rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+
+      form {
+        padding: 1.5rem 1rem;
+      }
+
+      button {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+      }
+
+      .complaints-list {
+        padding: 1rem;
+      }
     }
   </style>
 </head>
 <body>
   <h1>💌 Welcome to Your Personal Complaint Box Ingela 💌</h1>
   <p>Hey babe, got something on your mind? Let it all out below 😘</p>
-
-  <div id="emojiDisplay">🥰</div>
 
   <form id="complaintForm">
     <label for="mood">Mood:</label>
@@ -140,30 +146,25 @@
       <option value="😭">😭 Crying in the club</option>
     </select>
 
-    <label for="date">Date of Offense (optional):</label>
-    <input type="date" id="date" name="date" />
-
-    <label>
-      <input type="checkbox" id="anonymousToggle" />
-      Submit anonymously 🙈
-    </label>
-
-    <input type="text" id="name" name="name" placeholder="Your Name (Optional)" />
+    <label for="date">Date of Offense:</label>
+    <input type="date" id="date" name="date" required />
 
     <label for="complaint">Complaint:</label>
-    <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot my ice cream again... 😔"></textarea>
+    <textarea id="complaint" name="complaint" rows="5" placeholder="E.g. You forgot to get me ice cream..."></textarea>
 
     <label>
       <input type="checkbox" required />
       I understand that this complaint may be read while Sarthak's eating chips or working out 🤷‍♂️
     </label>
 
-    <div id="livePreview"></div>
-
+    <br><br>
     <button type="submit">Submit Complaint 💌</button>
   </form>
 
-  <div id="history"></div>
+  <div class="complaints-list" id="complaintsList" style="display:none;">
+    <h2>📜 Complaint History</h2>
+    <div id="complaintEntries"></div>
+  </div>
 
   <div class="footer">
     <p class="heart">❤️ Made with love and fear ❤️</p>
@@ -171,90 +172,92 @@
 
   <script>
     const form = document.getElementById('complaintForm');
-    const moodSelect = document.getElementById('mood');
-    const emojiDisplay = document.getElementById('emojiDisplay');
-    const complaintInput = document.getElementById('complaint');
-    const anonymousToggle = document.getElementById('anonymousToggle');
-    const nameInput = document.getElementById('name');
-    const livePreview = document.getElementById('livePreview');
-    const historyDiv = document.getElementById('history');
+    const complaintsList = document.getElementById('complaintsList');
+    const complaintEntries = document.getElementById('complaintEntries');
 
-    moodSelect.addEventListener('change', () => {
-      emojiDisplay.textContent = moodSelect.value;
-    });
+    // Load from localStorage
+    function loadComplaints() {
+      const stored = localStorage.getItem('complaints');
+      if (!stored) return [];
 
-    anonymousToggle.addEventListener('change', () => {
-      nameInput.disabled = anonymousToggle.checked;
-      nameInput.placeholder = anonymousToggle.checked ? "Anonymous" : "Your Name (Optional)";
-    });
-
-    complaintInput.addEventListener('input', () => {
-      livePreview.textContent = `"${complaintInput.value}"`;
-    });
-
-    const renderHistory = () => {
-      const data = JSON.parse(localStorage.getItem('complaints')) || [];
-      if (data.length > 0) {
-        historyDiv.innerHTML = "<h3>📝 Your Complaint History:</h3>" +
-          data.map(c => `<p><strong>${c.date || 'Today'}</strong> — <em>${c.name || 'Anonymous'}</em> ${c.mood}: ${c.complaint}</p>`).join('');
+      try {
+        return JSON.parse(stored);
+      } catch {
+        return [];
       }
-    };
-    renderHistory();
+    }
 
-    form.addEventListener('submit', async (e) => {
+    function saveComplaint(data) {
+      const complaints = loadComplaints();
+      complaints.unshift(data);
+      localStorage.setItem('complaints', JSON.stringify(complaints));
+    }
+
+    function renderComplaints() {
+      const complaints = loadComplaints();
+      complaintEntries.innerHTML = '';
+
+      if (complaints.length === 0) {
+        complaintsList.style.display = 'none';
+        return;
+      }
+
+      complaintsList.style.display = 'block';
+
+      complaints.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'complaint-entry';
+        div.innerHTML = `
+          <strong>${c.date}</strong> - <em>${c.mood}</em><br>
+          ${c.text}
+        `;
+        complaintEntries.appendChild(div);
+      });
+    }
+
+    form.addEventListener('submit', async function (e) {
       e.preventDefault();
 
-      const mood = moodSelect.value;
-      const complaint = complaintInput.value.trim();
+      const mood = document.getElementById('mood').value;
+      const complaint = document.getElementById('complaint').value.trim();
       const date = document.getElementById('date').value;
-      const name = anonymousToggle.checked ? "Anonymous" : nameInput.value.trim();
 
       if (!complaint) {
-        alert("Hey! You forgot to write the complaint, baby! 😅");
+        alert('Hey! You forgot to write the complaint baby! 😅');
         return;
       }
 
       const formspreeEndpoint = "https://formspree.io/f/mzzgapoq";
+
       const formData = new FormData();
       formData.append("mood", mood);
       formData.append("complaint", complaint);
-      formData.append("name", name);
-      if (date) formData.append("date", date);
+      formData.append("date", date);
 
       try {
         const response = await fetch(formspreeEndpoint, {
           method: "POST",
           body: formData,
-          headers: { Accept: "application/json" },
+          headers: {
+            Accept: "application/json",
+          },
         });
 
         if (response.ok) {
-          confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, emojis: ['💖', '💌', '🥺'] });
-
-          const affirmations = [
-            "You're the sweetest 🧁",
-            "I'll do better, promise! 💪",
-            "You're my #1 complaint queen 👑",
-            "You deserve better every day 💖",
-          ];
-          alert(`Complaint received!\n${affirmations[Math.floor(Math.random() * affirmations.length)]}`);
-
-          // Save all complaints
-          let history = JSON.parse(localStorage.getItem("complaints")) || [];
-          history.unshift({ mood, complaint, name, date: date || new Date().toLocaleString() });
-          localStorage.setItem("complaints", JSON.stringify(history));
-
-          renderHistory();
+          saveComplaint({ mood, text: complaint, date });
+          renderComplaints();
+          alert(`Complaint received: ${mood} - "${complaint}"\nThank you for helping me grow into a better boyfriend! 💖`);
           form.reset();
-          livePreview.textContent = "";
-          emojiDisplay.textContent = "🥰";
         } else {
-          alert("Oops! Something went wrong while sending your complaint 😥");
+          alert("Oops! Something went wrong while sending your complaint babe 😥");
         }
       } catch (error) {
-        alert("Failed to send complaint. Check your internet or try again later 😢");
+        alert("Failed to send complaint. Check your internet or try again later baby girl 😢");
       }
     });
+
+    // Initial load
+    renderComplaints();
   </script>
 </body>
 </html>
