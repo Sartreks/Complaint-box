@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Complaint Box for Bae 💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     body {
       background: #ffe6f0;
@@ -17,24 +18,8 @@
 
     h1 {
       font-size: 2.2rem;
-      font-weight: 600;
-      color: #d63384;
       margin-bottom: 1rem;
-      line-height: 1.2;
-    }
-
-    h1 .emoji {
-      font-size: 2.4rem;
-      margin: 0 0.3rem;
-      vertical-align: middle;
-    }
-
-    h1 .name {
-      display: block;
-      font-size: 1.6rem;
-      margin-top: 0.2rem;
-      color: #e91e63;
-      font-weight: 700;
+      font-weight: 600;
     }
 
     p {
@@ -49,7 +34,7 @@
       box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
       max-width: 500px;
       margin: auto;
-      box-sizing: border-box;
+      position: relative;
     }
 
     textarea,
@@ -134,23 +119,28 @@
       padding-bottom: 0.5rem;
     }
 
+    #lovingMessage {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #d63384;
+      font-weight: 600;
+      min-height: 2rem;
+      font-style: italic;
+    }
+
     @media (max-width: 480px) {
       h1 {
         font-size: 1.8rem;
       }
-      h1 .emoji {
-        font-size: 2rem;
-        margin: 0 0.2rem;
-      }
-      h1 .name {
-        font-size: 1.3rem;
-      }
+
       p {
         font-size: 1rem;
       }
+
       form {
         padding: 1.5rem 1rem;
       }
+
       button {
         font-size: 1rem;
         padding: 0.8rem 1.5rem;
@@ -159,13 +149,7 @@
   </style>
 </head>
 <body>
-  <h1>
-    <span class="emoji">💌</span>
-    Welcome to Your Personal Complaint Box
-    <span class="emoji">💌</span>
-    <br />
-    <span class="name">Ingela</span>
-  </h1>
+  <h1>💌 Welcome to Your Personal Complaint Box Ingela 💌</h1>
   <p>Hey babe, got something on your mind? Let it all out below 😘</p>
 
   <form id="complaintForm">
@@ -198,6 +182,8 @@
 
     <br><br>
     <button type="submit">Submit Complaint 💌</button>
+
+    <div id="lovingMessage" aria-live="polite"></div>
   </form>
 
   <div class="history" id="complaintHistory">
@@ -212,7 +198,21 @@
   <script>
     const form = document.getElementById('complaintForm');
     const historyList = document.getElementById('historyList');
+    const lovingMessageEl = document.getElementById('lovingMessage');
     const storageKey = 'complaints';
+
+    const lovingMessages = [
+      "You’re amazing, babe 💖",
+      "Sending you all my love ❤️‍🔥",
+      "Thanks for being so honest, love! 😘",
+      "Every complaint is just more reason to love you 🥰",
+      "You’re my favorite human, even with complaints 💕",
+      "Love you always, no matter what 💝",
+      "You make my heart flutter 💓",
+      "Together, we’re unstoppable 💪❤️",
+      "Your honesty makes us stronger 💜",
+      "Complaints accepted, hugs guaranteed 🤗"
+    ];
 
     function getDateSelection() {
       const radios = document.querySelectorAll('input[name="date"]');
@@ -239,9 +239,23 @@
       });
     }
 
+    function showConfetti() {
+      // Basic confetti burst from canvas-confetti lib
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function showRandomLovingMessage() {
+      const msg = lovingMessages[Math.floor(Math.random() * lovingMessages.length)];
+      lovingMessageEl.textContent = msg;
+    }
+
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-
+      
       const mood = document.getElementById('mood').value;
       const complaint = document.getElementById('complaint').value.trim();
       const date = getDateSelection();
@@ -269,7 +283,8 @@
         });
 
         if (response.ok) {
-          alert(`Complaint received from Ingela 💖\nMood: ${mood}\n"${complaint}"\nDate: ${date}`);
+          showConfetti();
+          showRandomLovingMessage();
           const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
           stored.unshift({ mood, text: complaint, date });
           localStorage.setItem(storageKey, JSON.stringify(stored));
