@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Complaint Box for Bae 💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     body {
       background: #ffe6f0;
@@ -33,6 +34,7 @@
       box-shadow: 0 0 15px rgba(214, 51, 132, 0.2);
       max-width: 500px;
       margin: auto;
+      position: relative;
     }
 
     textarea,
@@ -117,6 +119,15 @@
       padding-bottom: 0.5rem;
     }
 
+    #lovingMessage {
+      margin-top: 1rem;
+      font-size: 1.2rem;
+      color: #d63384;
+      font-weight: 600;
+      min-height: 2rem;
+      font-style: italic;
+    }
+
     @media (max-width: 480px) {
       h1 {
         font-size: 1.8rem;
@@ -138,7 +149,7 @@
   </style>
 </head>
 <body>
-  <h1>💌 Welcome to Your Personal Complaint Box Ingela 💌</h1>
+  <h1>💌 Welcome to Your Personal Complaint Box 💌 Ingela </h1>
   <p>Hey babe, got something on your mind? Let it all out below 😘</p>
 
   <form id="complaintForm">
@@ -171,6 +182,8 @@
 
     <br><br>
     <button type="submit">Submit Complaint 💌</button>
+
+    <div id="lovingMessage" aria-live="polite"></div>
   </form>
 
   <div class="history" id="complaintHistory">
@@ -185,7 +198,21 @@
   <script>
     const form = document.getElementById('complaintForm');
     const historyList = document.getElementById('historyList');
+    const lovingMessageEl = document.getElementById('lovingMessage');
     const storageKey = 'complaints';
+
+    const lovingMessages = [
+      "You’re amazing, babe 💖",
+      "Sending you all my love ❤️‍🔥",
+      "Thanks for being so honest, love! 😘",
+      "Every complaint is just more reason to love you 🥰",
+      "You’re my favorite human, even with complaints 💕",
+      "Love you always, no matter what 💝",
+      "You make my heart flutter 💓",
+      "Together, we’re unstoppable 💪❤️",
+      "Your honesty makes us stronger 💜",
+      "Complaints accepted, hugs guaranteed 🤗"
+    ];
 
     function getDateSelection() {
       const radios = document.querySelectorAll('input[name="date"]');
@@ -210,6 +237,20 @@
         div.innerHTML = `<strong>${entry.date}</strong> - ${entry.mood}<br>${entry.text}<br><em>– Ingela</em>`;
         historyList.appendChild(div);
       });
+    }
+
+    function showConfetti() {
+      // Basic confetti burst from canvas-confetti lib
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 }
+      });
+    }
+
+    function showRandomLovingMessage() {
+      const msg = lovingMessages[Math.floor(Math.random() * lovingMessages.length)];
+      lovingMessageEl.textContent = msg;
     }
 
     form.addEventListener('submit', async function (e) {
@@ -242,7 +283,8 @@
         });
 
         if (response.ok) {
-          alert(`Complaint received from Ingela 💖\nMood: ${mood}\n"${complaint}"\nDate: ${date}`);
+          showConfetti();
+          showRandomLovingMessage();
           const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
           stored.unshift({ mood, text: complaint, date });
           localStorage.setItem(storageKey, JSON.stringify(stored));
