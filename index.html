@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Complaint Box for Bae 💖</title>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <style>
     body {
@@ -146,9 +146,60 @@
         padding: 0.8rem 1.5rem;
       }
     }
+
+    /* Loading Screen Styles */
+    #loadingScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #ffccde;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.5rem;
+      color: #d63384;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+      user-select: none;
+    }
+
+    #loadingScreen .spinner {
+      border: 5px solid #ffd6e6;
+      border-top: 5px solid #d63384;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-top: 1rem;
+    }
+
+    #loadingMessage {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      min-height: 2rem;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
   </style>
 </head>
 <body>
+  <div id="loadingScreen" role="alert" aria-live="polite" aria-atomic="true">
+    <div id="loadingMessage">Loading your complaint palace 💖</div>
+    <div class="spinner"></div>
+  </div>
+
   <h1>💌 Welcome to Your Personal Complaint Box Ingela 💌</h1>
   <p>Hey babe, got something on your mind? Let it all out below 😘</p>
 
@@ -190,7 +241,7 @@
       I understand this may be read while Sarthak's eating chips or working out 🤷‍♂️
     </label>
 
-    <br><br>
+    <br /><br />
     <button type="submit">Submit Complaint 💌</button>
 
     <div id="lovingMessage" aria-live="polite"></div>
@@ -224,6 +275,19 @@
       "Complaints accepted, hugs guaranteed 🤗"
     ];
 
+    const loadingMessages = [
+      "Getting everything ready for Ingela & Sarthak...",
+      "Preparing the complaint throne for you two...",
+      "Sarthak's checking the chips, Ingela's stirring the love...",
+      "Loading hugs and kisses from Sarthak & Ingela...",
+      "Tuning love frequency between Ingela & Sarthak...",
+      "Charging love-powered complaint engine...",
+      "Almost there, Sarthak and Ingela's love is strong!",
+      "Ready to catch your complaints, Ingela & Sarthak style...",
+      "Prepping heartbeats for Ingela & Sarthak’s complaints...",
+      "A moment of love and patience for Sarthak & Ingela..."
+    ];
+
     function getDateSelection() {
       const radios = document.querySelectorAll('input[name="date"]');
       let selected = '';
@@ -237,9 +301,7 @@
 
     function updateHistoryDisplay() {
       const stored = JSON.parse(localStorage.getItem(storageKey)) || [];
-      historyList.innerHTML = stored.length === 0
-        ? '<p>No complaints yet, so proud of you 💖</p>'
-        : '';
+      historyList.innerHTML = stored.length === 0 ? '<p>No complaints yet, so proud of you 💖</p>' : '';
 
       stored.forEach(entry => {
         const div = document.createElement('div');
@@ -250,11 +312,10 @@
     }
 
     function showConfetti() {
-      // Basic confetti burst from canvas-confetti lib
       confetti({
         particleCount: 150,
         spread: 100,
-        origin: { y: 0.6 }
+        origin: { y: 0.6 },
       });
     }
 
@@ -265,7 +326,7 @@
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      
+
       const mood = document.getElementById('mood').value;
       const complaint = document.getElementById('complaint').value.trim();
       const date = getDateSelection();
@@ -306,6 +367,26 @@
       } catch (error) {
         alert("Failed to send complaint. Check your internet or try again later baby girl 😢");
       }
+    });
+
+    // Loading screen message cycling & timing
+    window.addEventListener('load', () => {
+      const loading = document.getElementById('loadingScreen');
+      const loadingMsgEl = document.getElementById('loadingMessage');
+
+      let index = 0;
+      const messageInterval = setInterval(() => {
+        loadingMsgEl.textContent = loadingMessages[index];
+        index = (index + 1) % loadingMessages.length;
+      }, 1000);
+
+      setTimeout(() => {
+        clearInterval(messageInterval);
+        loading.style.opacity = '0';
+        setTimeout(() => {
+          loading.remove();
+        }, 500); // fade out duration
+      }, 3000);
     });
 
     updateHistoryDisplay();
